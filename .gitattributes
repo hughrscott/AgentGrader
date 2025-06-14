@@ -1,0 +1,6 @@
+*.py linguist-language=Python
+*.txt linguist-language=Text
+*.md linguist-language=Markdown
+app.py linguist-detectable=true
+requirements.txt linguist-detectable=true
+README.md linguist-detectable=true 

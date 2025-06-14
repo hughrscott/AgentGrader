@@ -2,21 +2,19 @@ import gradio as gr
 from grader_agent import AnswerGraderAgent
 import requests
 import json
+from transformers import pipeline
 
 def get_model():
-    print("Initializing Ollama phi model...")
+    print("Loading model from Hugging Face...")
     try:
+        # Initialize the text generation pipeline with a Hugging Face model
+        generator = pipeline('text-generation', model='gpt2')  # Using gpt2 as a base model
+        
         def generate_text(prompt):
             try:
-                # Call Ollama API
-                response = requests.post('http://localhost:11434/api/generate',
-                    json={
-                        "model": "phi",
-                        "prompt": prompt,
-                        "stream": False
-                    })
-                response.raise_for_status()
-                return response.json()['response']
+                # Generate text with the model
+                result = generator(prompt, max_length=200, num_return_sequences=1)
+                return result[0]['generated_text']
             except Exception as e:
                 print(f"Error generating text: {str(e)}")
                 raise Exception(f"Text generation failed: {str(e)}")
@@ -24,8 +22,8 @@ def get_model():
         return generate_text
         
     except Exception as e:
-        print(f"Error initializing model: {str(e)}")
-        raise Exception(f"Failed to initialize model: {str(e)}")
+        print(f"Error loading model: {str(e)}")
+        raise Exception(f"Failed to load model: {str(e)}")
 
 print("Setting up model...")
 model = get_model()
